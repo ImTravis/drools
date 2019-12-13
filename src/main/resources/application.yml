@@ -1,0 +1,5 @@
+server:
+  tomcat:
+    uri-encoding: UTF-8
+  port: 7015
+  address: 127.0.0.1
