@@ -12,3 +12,53 @@ rule "checkAge"
         final Logger LOGGER = LoggerFactory.getLogger("已经成年↓") ;
         LOGGER.info("***"+$stu.getName()+"已经成年\n");
 end
+
+
+
+
+
+
+rule "gradeLowSeventy"
+    salience 99
+    activation-group "gradeLow"
+    when $stu : StudentFact(grade < 70)
+    then
+        final Logger LOGGER = LoggerFactory.getLogger("成绩低于70分→→→→") ;
+        LOGGER.info("***你家孩子："+$stu.getName()+"成绩低于70分，快不及格了，得多督促\n");
+end
+
+rule "gradeLowSixty"
+    salience 100
+    activation-group "gradeLow"
+    when $stu : StudentFact(grade < 60)
+    then
+        final Logger LOGGER = LoggerFactory.getLogger("成绩低于60分→→→→") ;
+        LOGGER.info("***你家孩子："+$stu.getName()+"成绩不及格，明天过来开家长会\n");
+end
+
+
+
+
+
+
+rule "gradeLowSeventy_aAgendaGroup"
+    salience 90
+    agenda-group "gradeLow"
+    lock-on-active
+    when $stu : StudentFact(grade < 70)
+    then
+        final Logger LOGGER = LoggerFactory.getLogger("成绩低于70分→→→→") ;
+        LOGGER.info("***_aAgendaGroup你家孩子："+$stu.getName()+"成绩低于70分，快不及格了，得多督促\n");
+end
+
+rule "gradeLowSixty_aAgendaGroup"
+    salience 100
+    agenda-group "gradeLow"
+     lock-on-active
+    when $stu : StudentFact(grade < 60)
+    then
+        final Logger LOGGER = LoggerFactory.getLogger("成绩低于60分→→→→") ;
+        LOGGER.info("***_aAgendaGroup你家孩子："+$stu.getName()+"成绩不及格，明天过来开家长会\n");
+end
+
+//kcontext.getKnowledgeRuntime().getAgenda().getAgendaGroup("group3").setFocus()
