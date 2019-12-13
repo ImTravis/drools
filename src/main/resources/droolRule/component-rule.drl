@@ -1,0 +1,30 @@
+package droolRule ;
+
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import com.drools.rules.entity.*;
+import com.drools.rules.service.*;
+dialect  "java"
+global Boolean isEnable
+global HelloService helloService
+global String name
+
+rule "validGlobalParam"
+    salience 100
+    enabled (isEnable)
+    when
+    then
+        System.out.println("***************validGlobalParam it works!");
+end
+
+
+
+rule "validObj"
+    when
+    then
+        helloService.sayHelloWord(name);
+        System.out.println("***************validObj it works!");
+end
+
+
+
