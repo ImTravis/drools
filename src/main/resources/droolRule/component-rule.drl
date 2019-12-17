@@ -4,27 +4,131 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import com.drools.rules.entity.*;
 import com.drools.rules.service.*;
+import com.drools.rules.service.impl.*
+import org.kie.api.runtime.Channel;
+import java.util.List;
 dialect  "java"
 global Boolean isEnable
 global HelloService helloService
-global String name
 
-rule "validGlobalParam"
+rule "globalParam"
     salience 100
-    enabled (isEnable)
+    enabled (isEnable)//是否启动规则
     when
+        $name:StudentFact()
     then
-        System.out.println("***************validGlobalParam it works!");
+        $name.setName("有名");
+        System.out.println("***************  GlobalParam it works!");
 end
 
 
 
-rule "validObj"
+rule "globalParamObj"
     when
     then
-        helloService.sayHelloWord(name);
+        helloService.sayHelloWord("hah");
         System.out.println("***************validObj it works!");
 end
 
 
+rule "sendWithChannel"
+    when
+    then
+     Channel channel = kcontext.getKieRuntime().getChannels().get("channelOne");
+      channel.send("hello world 我是规则 sendWithChannel");
+end
 
+/* query girls规则 按需查询- 筛选出成年的女学生    注意，触发的条件，检测到StudentFact，即其他规则的入参和它一样都是StudentFact,如果是StudentFact集合也不会触发*/
+
+
+rule "editStudent"
+
+    salience 100
+    when
+        $student: StudentFact();
+    then
+        $student.setName("名字已经修改");
+        System.out.println("\nEdit Studetn it works!");
+end
+
+query "girls" (Integer $age)
+    $girl: StudentFact(sex == "female", age > $age)
+end
+/* ---------------------over query-------------------------*/
+
+
+/* start query on live */
+rule "editSchoolFact"
+    salience 100
+    when
+        $school: SchoolFact();
+    then
+        $school.setName("南京邮电大学仙林分校");
+end
+
+query "schools" (Integer $classNum)
+    $school: SchoolFact(classNum > $classNum)
+end
+
+query "schoolsOnLive" ()
+    $school: SchoolFact()
+end
+
+/* over query on live ------------------------------*/
+
+rule "eachStudent"
+when
+    $li:List(size > 0)
+    $student:StudentFact() from $li
+then
+    System.out.print("\n学生信息："+$student.getName()+"，性别："+$student.getSex()+"，年龄："+$student.getAge());
+end
+
+
+/* exit 、forall 、一般的遍历集合----------------------------*/
+rule "exitSchool"
+when
+  $li:List(size > 0)
+   exists($school:SchoolFact(classNum>120) from $li)
+
+then
+    System.out.print("存在学校班级数大于120的\n");
+ end
+
+
+rule "selectSchool"
+when
+  $li:List(size > 0)
+   $school:SchoolFact(classNum>120) from $li
+
+then
+    System.out.print("学校班级数大于120的\n");
+ end
+
+
+rule "forallSchool"
+when
+  $li:List(size > 0)
+   forall($school:SchoolFact(classNum>120) from $li)
+
+then
+    System.out.print("所有的学校班级数都大于120的\n");
+ end
+ /* over exit 、forall 、一般的遍历集合 ----------------------------*/
+
+/* collect 获取集合中所有的妹子 ，入参 PersonFact集合 */
+rule "collectRule"
+when
+    $li:List(size > 0)
+    $girls:List() from collect(PersonFact(sex=="female")from $li)
+then
+    System.out.print("\n女人数量："+$girls.size());
+end
+
+/*与上面相比，注意入参：入参 PersonFact对象 */
+rule "collectRuleObject"
+when
+    $girls:List() from collect(PersonFact(sex=="female"))
+then
+    System.out.print("\n女人数量："+$girls.size());
+end

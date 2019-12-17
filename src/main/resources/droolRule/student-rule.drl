@@ -61,4 +61,5 @@ rule "gradeLowSixty_aAgendaGroup"
         LOGGER.info("***_aAgendaGroup你家孩子："+$stu.getName()+"成绩不及格，明天过来开家长会\n");
 end
 
+
 //kcontext.getKnowledgeRuntime().getAgenda().getAgendaGroup("group3").setFocus()
