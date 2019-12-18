@@ -11,3 +11,12 @@
     测试方法：
     StudentAgeRuleTest.gradeLow()
     StudentAgeRuleTest.gradeLow_aAgendaGroup()
+    
+    accumulate语法（包括集合操作，函数操作）
+    测试方法：
+    ComponentRuleTest.accumulate();
+    
+    接受RULE返回的参数
+    测试方法：
+    ComponentRuleTest.accumulate()中执行的最后一条规则，规则名=accumulateGetNamesListAction
+    
