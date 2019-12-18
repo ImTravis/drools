@@ -214,4 +214,5 @@ then
     $resultFact.setList($names);
     System.out.print("\n价格低于120的动物，返回name集合："+$names);
 end
+
 /* over accumulate  遍历数据集 并对数据项进行自定义操作*/

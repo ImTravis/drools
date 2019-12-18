@@ -218,6 +218,9 @@ public class ComponentRuleTest {
 
     }
 
+    /**
+     *  accumulate
+     */
     @Test
     public void accumulate(){
         List<AnimalsFact> list = new ArrayList<>() ;
@@ -257,21 +260,22 @@ public class ComponentRuleTest {
 //        num = kieSession.fireAllRules(new RuleNameEndsWithAgendaFilter("accumulateListMinAction"));
 
         //低于120价格的动物上涨10块
-//        num = kieSession.fireAllRules(new RuleNameEndsWithAgendaFilter("accumulateListMinAddTenAction"));
+        num = kieSession.fireAllRules(new RuleNameEndsWithAgendaFilter("accumulateListMinAddTenAction"));
 
 
         //TODO 低于120价格的动物上涨10块 ，总和再减去10块，不知道为啥reserve没有执行成功
 //        num = kieSession.fireAllRules(new RuleNameEndsWithAgendaFilter("accumulateListReverseAction"));
 
-        System.out.print("\nnum:"+num);
+        System.out.print("\n匹配执行的规则数:"+num);
 
+        System.out.print("\n\n获取rule返回参数操作*******:");
         //取出所有价格低于120的动物的name集合
         ResultFact resultFact = new ResultFact();
         kieSession.insert(resultFact);
             //TODO 一开始我定义返回参数的时候直接用的 new ArrayList()，规则中也用List（）接的；执行完结果是拿到了，但是却执行了规则4次
             // （可能是因为，kieSession.insert(list);传入的也是集合，返回参数也是集合，导致规则无法识别，哪个对应哪个，从而只能按照每种组合的情况，进行匹配 ）
         num = kieSession.fireAllRules(new RuleNameEndsWithAgendaFilter("accumulateGetNamesListAction"));
-        System.out.print("\nnum:"+num+",返回结果："+resultFact);
+        System.out.print("\n匹配执行的规则数:"+num+",返回结果："+resultFact);
 
 
     }
