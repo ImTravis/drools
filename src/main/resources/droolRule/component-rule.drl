@@ -122,7 +122,7 @@ when
     $li:List(size > 0)
     $girls:List() from collect(PersonFact(sex=="female")from $li)
 then
-    System.out.print("\n女人数量："+$girls.size());
+    System.out.print("\n女生数量："+$girls.size());
 end
 
 /*与上面相比，注意入参：入参 PersonFact对象 */
@@ -130,5 +130,88 @@ rule "collectRuleObject"
 when
     $girls:List() from collect(PersonFact(sex=="female"))
 then
-    System.out.print("\n女人数量："+$girls.size());
+    System.out.print("\n女生数量："+$girls.size());
 end
+
+
+
+/* accumulate  遍历数据集 并对数据项进行自定义操作*/
+/*传入一个对象  单个动物的总价*/
+rule "accumulateObjAction"
+when
+    $animal:AnimalsFact()
+    $total:Number() from accumulate(AnimalsFact($price:price) from $animal,sum($price));
+then
+    System.out.print("\n动物总价格："+$total);
+end
+
+/*传入对象集合  所有母动物的总价*/
+rule "accumulateListAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact(sex=="female",$price:price) from $animals,sum($price));
+then
+    System.out.print("\n母动物总价格："+$total);
+end
+
+/*传入对象集合 所有动物平均价格*/
+rule "accumulateListAverageAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact($price:price) from $animals,average($price));
+then
+    System.out.print("\n动物平均价格："+$total);
+end
+
+/*传入对象集合 哪个动物最贵*/
+rule "accumulateListMaxAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact($price:price) from $animals,max($price));
+then
+    System.out.print("\n最贵动物："+$total);
+end
+
+
+/*传入对象集合 哪个动物最便宜*/
+rule "accumulateListMinAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact($price:price) from $animals,min($price));
+then
+    System.out.print("\n最便宜动物："+$total);
+end
+
+
+/*传入对象集合 低于120块的动物价格上调10块,并计算他们（低于120）的总和*/
+
+rule "accumulateListMinAddTenAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact(price<120,$price:price) from $animals,init(double newprice=0;double upPrice=10;),action(newprice += $price+upPrice;),result(newprice));
+then
+    System.out.print("\n价格低于120的动物，上调10块后价格的总和："+$total);
+end
+
+
+/*传入对象集合 低于120块的动物价格上调10块,并计算他们（低于120）的总和*/
+
+rule "accumulateListReverseAction"
+when
+    $animals:List()
+    $total:Number() from accumulate(AnimalsFact(price<120,$price:price) from $animals,init(double newprice=0;),action(newprice += $price+10;),reverse(newprice=newprice-10;),result(newprice));
+then
+    System.out.print("\n价格低于120的动物，上调10块后价格的总和再减去10块："+$total);
+end
+
+/*取出所有价格低于120的动物的name集合，并返回name集合*/
+rule "accumulateGetNamesListAction"
+when
+    $animals:List()
+    $resultFact:ResultFact()
+    $names:List() from accumulate(AnimalsFact(price<120,$name:name) from $animals,collectList($name));
+then
+    $resultFact.setList($names);
+    System.out.print("\n价格低于120的动物，返回name集合："+$names);
+end
+/* over accumulate  遍历数据集 并对数据项进行自定义操作*/
